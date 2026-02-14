@@ -1,0 +1,151 @@
+# docker-compose.yaml
+# Pipeline Autopilot - Airflow with LocalExecutor
+# Author: Member 1 (Pipeline Architect)
+# Date: February 2026
+
+version: '3.8'
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.8.1-python3.10
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: 'UTC'
+    # Logging configuration
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/logs'
+    AIRFLOW__LOGGING__LOGGING_LEVEL: 'INFO'
+    # Retry configuration (applies globally, can override in DAG)
+    AIRFLOW__CORE__DEFAULT_TASK_RETRIES: 2
+    # Parallelism settings for LocalExecutor
+    AIRFLOW__CORE__PARALLELISM: 8
+    AIRFLOW__CORE__DAG_CONCURRENCY: 4
+    AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: 2
+    # Webserver settings
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+    AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: 'UTC'
+    # Scheduler settings
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 30
+    # Python path for importing scripts
+    PYTHONPATH: '/opt/airflow/scripts:/opt/airflow'
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts:/opt/airflow/scripts
+    - ./data:/opt/airflow/data
+    - ./logs:/opt/airflow/logs
+    - ./tests:/opt/airflow/tests
+    - ./requirements.txt:/opt/airflow/requirements.txt
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on: &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+
+services:
+  # PostgreSQL Database for Airflow metadata
+  postgres:
+    image: postgres:15
+    container_name: pipeline_autopilot_postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # Airflow Database Initialization (runs once)
+  airflow-init:
+    <<: *airflow-common
+    container_name: pipeline_autopilot_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        # Install additional Python dependencies
+        pip install -r /opt/airflow/requirements.txt
+        # Initialize the database
+        airflow db init
+        # Create admin user
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@pipelineautopilot.com
+        echo "Airflow initialization complete!"
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Airflow Webserver (UI)
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: pipeline_autopilot_webserver
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  # Airflow Scheduler (runs DAGs)
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: pipeline_autopilot_scheduler
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $(hostname)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  # Airflow Triggerer (for deferrable operators - optional but useful)
+  airflow-triggerer:
+    <<: *airflow-common
+    container_name: pipeline_autopilot_triggerer
+    command: triggerer
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type TriggererJob --hostname $(hostname)"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+    name: pipeline_autopilot_postgres_data
+
+networks:
+  default:
+    name: pipeline_autopilot_network

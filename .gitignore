@@ -1,0 +1,48 @@
+# =============================================================================
+# Pipeline Autopilot - .gitignore
+# =============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Airflow
+logs/*
+!logs/.gitkeep
+airflow.db
+airflow.cfg
+webserver_config.py
+
+# Data Files (large - use DVC)
+data/raw/*.csv
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.parquet
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/schema/.gitkeep
+!data/reports/.gitkeep
+
+# Environment & Secrets
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports (generated)
+data/reports/*.json
+data/reports/*.html
