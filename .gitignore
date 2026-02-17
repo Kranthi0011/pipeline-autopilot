@@ -23,6 +23,7 @@ webserver_config.py
 
 # Data Files (large - use DVC)
 data/raw/*.csv
+!data/processed/processed_dataset.csv
 data/raw/*.parquet
 data/processed/*.csv
 data/processed/*.parquet

@@ -1,0 +1,9 @@
+{
+  "validated_at": "2026-02-16T17:32:00.814404",
+  "is_valid": true,
+  "message": "Baseline schema created. No comparison performed.",
+  "total_errors": 0,
+  "total_warnings": 0,
+  "errors": [],
+  "warnings": []
+}
