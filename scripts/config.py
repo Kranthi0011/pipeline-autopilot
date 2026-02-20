@@ -45,7 +45,7 @@ RAW_DATA_FILE = RAW_DATA_DIR / "final_dataset.csv"
 RAW_DATASET_PATH = RAW_DATA_FILE  # Alias for backward compatibility
 
 # Output files (Updated for Member 3's preprocessing)
-PROCESSED_DATA_FILE = PROCESSED_DATA_DIR / "final_dataset_processed.csv"
+PROCESSED_DATA_FILE = PROCESSED_DATA_DIR / "processed_dataset.csv"
 PROCESSED_DATASET_PATH = PROCESSED_DATA_FILE  # Alias for backward compatibility
 TRAIN_DATASET_PATH = PROCESSED_DATA_DIR / "train_dataset.csv"
 TEST_DATASET_PATH = PROCESSED_DATA_DIR / "test_dataset.csv"
