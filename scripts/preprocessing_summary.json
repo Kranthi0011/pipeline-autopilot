@@ -1,0 +1,86 @@
+{
+  "raw_shape": {
+    "rows": 149967,
+    "cols": 32
+  },
+  "processed_shape": {
+    "rows": 149967,
+    "cols": 32
+  },
+  "rows_removed": 0,
+  "columns_added": 0,
+  "new_columns": [],
+  "null_counts_after": 0,
+  "target_distribution": {
+    "0": 132971,
+    "1": 16996
+  },
+  "encoding_info": {
+    "pipeline_name": {
+      "method": "frequency",
+      "n_unique": 4216,
+      "top_5": {
+        "data_quality_checks": 0.06668133656071003,
+        "model_training_pipeline": 0.06668133656071003,
+        "deployment_pipeline": 0.06668133656071003,
+        "transform_etl_pipeline": 0.06668133656071003,
+        "ingestion_api_pipeline": 0.06668133656071003
+      }
+    },
+    "repo": {
+      "method": "frequency",
+      "n_unique": 55,
+      "top_5": {
+        "local/simulated/data_quality_checks": 0.06668133656071003,
+        "local/simulated/model_training_pipeline": 0.06668133656071003,
+        "local/simulated/transform_etl_pipeline": 0.06668133656071003,
+        "local/simulated/ingestion_api_pipeline": 0.06668133656071003,
+        "local/simulated/deployment_pipeline": 0.06668133656071003
+      }
+    },
+    "head_branch": {
+      "method": "frequency",
+      "n_unique": 9652,
+      "top_5": {
+        "main": 0.17210452966319256,
+        "master": 0.09350057012542759,
+        "develop": 0.07877733101282282,
+        "feature/login": 0.06753485766868711,
+        "feature/mlops": 0.06677469043189502
+      }
+    },
+    "trigger_type": {
+      "method": "frequency",
+      "n_unique": 15,
+      "top_5": {
+        "pull_request": 0.3647269065861156,
+        "push": 0.173458160795375,
+        "schedule": 0.1502063787366554,
+        "pull_request_target": 0.1064900944874539,
+        "workflow_dispatch": 0.09198690378549948
+      }
+    },
+    "failure_type": {
+      "method": "frequency",
+      "n_unique": 14,
+      "top_5": {
+        "none": 0.8866684003814173,
+        "success": 0.0626604519660992,
+        "runtime_error": 0.014249801623023733,
+        "data_quality": 0.007548327298672375,
+        "infra_failure": 0.007494982229423806
+      }
+    },
+    "error_message": {
+      "method": "frequency",
+      "n_unique": 417,
+      "top_5": {
+        "no_error": 0.6485560156567778,
+        "not_available": 0.3058406182693526,
+        "RuntimeError: Worker crashed unexpectedly (SIGKILL)": 0.002633912794148046,
+        "OSError: No space left on device while writing intermediate file": 0.002600572125867691,
+        "ValueError: Null rate exceeded threshold in column 'amount' (null% = 42%)": 0.00252722265565091
+      }
+    }
+  }
+}

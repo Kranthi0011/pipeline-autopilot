@@ -1,9 +1,177 @@
 {
-  "validated_at": "2026-02-16T17:32:00.814404",
+  "validated_at": "2026-02-23T02:04:21.392857",
   "is_valid": true,
-  "message": "Baseline schema created. No comparison performed.",
   "total_errors": 0,
-  "total_warnings": 0,
+  "total_warnings": 1,
   "errors": [],
-  "warnings": []
+  "warnings": [],
+  "column_reports": {
+    "run_id": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "pipeline_name": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "repo": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "trigger_time": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "day_of_week": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "hour": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "is_weekend": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "duration_seconds": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "avg_duration_7_runs": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "duration_deviation": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": [
+        {
+          "type": "min_drift",
+          "message": "Min value drifted: schema=-891.077, actual=-891.077",
+          "schema_min": -891.077,
+          "actual_min": -891.077
+        }
+      ]
+    },
+    "prev_run_status": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "failures_last_7_runs": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "workflow_failure_rate": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "hours_since_last_run": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "total_jobs": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "failed_jobs": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "retry_count": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "concurrent_runs": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "head_branch": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "is_main_branch": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "is_first_run": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "is_bot_triggered": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "trigger_type": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "failure_type": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "error_message": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "failed": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "pipeline_name_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "repo_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "head_branch_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "trigger_type_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "failure_type_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    },
+    "error_message_encoded": {
+      "is_valid": true,
+      "errors": [],
+      "warnings": []
+    }
+  }
 }
