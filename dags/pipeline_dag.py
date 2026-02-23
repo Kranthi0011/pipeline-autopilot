@@ -108,11 +108,12 @@ def on_task_retry(context):
 # =============================================================================
 # TASK FUNCTIONS
 # =============================================================================
-
 def run_data_acquisition(**context):
     """
     Task 1: Load and validate raw data.
     Reads the raw dataset and performs initial checks.
+    
+    NOTE: We only push simple dict to XCom (not DataFrame) to avoid serialization issues.
     """
     logger.info("=" * 60)
     logger.info("TASK: DATA ACQUISITION - Starting")
@@ -124,11 +125,26 @@ def run_data_acquisition(**context):
         
         result = acquire_data()
         
-        # Push result to XCom for downstream tasks
-        context['ti'].xcom_push(key='acquisition_status', value=result)
+        # FIXED: Only push simple summary to XCom, not the full DataFrame
+        # XCom can't handle DataFrames with mixed types
+        if isinstance(result, dict):
+            # If result contains a DataFrame, extract only metadata
+            xcom_result = {
+                "status": "success",
+                "rows": result.get("rows", result.get("row_count", "unknown")),
+                "columns": result.get("columns", result.get("column_count", "unknown")),
+                "message": "Data acquisition completed successfully"
+            }
+        else:
+            xcom_result = {
+                "status": "success",
+                "message": "Data acquisition completed"
+            }
+        
+        context['ti'].xcom_push(key='acquisition_status', value=xcom_result)
         
         logger.info("✅ Data acquisition completed successfully")
-        return result
+        return xcom_result
         
     except ImportError:
         # Fallback if script not yet implemented
@@ -141,10 +157,11 @@ def run_data_acquisition(**context):
         if not RAW_DATASET_PATH.exists():
             raise FileNotFoundError(f"Raw dataset not found: {RAW_DATASET_PATH}")
         
-        df = pd.read_csv(RAW_DATASET_PATH)
+        df = pd.read_csv(RAW_DATASET_PATH, low_memory=False)
         row_count = len(df)
         col_count = len(df.columns)
         
+        # FIXED: Simple dict only - no DataFrame
         result = {
             "status": "success",
             "rows": row_count,
