@@ -322,6 +322,23 @@ pipeline-autopilot/
    └─────────────────┘
 ```
 
+### Pipeline Execution Screenshots
+
+#### Pipeline Status & Task History
+All 7 tasks completed successfully with multiple successful runs:
+
+![Pipeline Status](images/pipeline_status.png)
+
+#### Graph View - DAG Structure
+Shows parallel execution of `schema_validation` and `bias_detection`:
+
+![Pipeline Graph](images/pipeline_graph.png)
+
+#### Gantt Chart - Execution Timeline
+Visualizes task duration and parallel execution:
+
+![Pipeline Gantt](images/pipeline_gantt.png)
+
 ### Task Details
 
 | Task | Description | Duration |
@@ -517,3 +534,4 @@ This project is for educational purposes (MLOps Course Project - February 2026).
 - **Airflow UI:** http://localhost:8080 (when running)
 
 ---
+
