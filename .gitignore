@@ -22,15 +22,18 @@ airflow.cfg
 webserver_config.py
 
 # Data Files (large - use DVC)
+# Data Files (large - use DVC)
 data/raw/*.csv
-!data/processed/processed_dataset.csv
+!data/raw/final_dataset.csv
 data/raw/*.parquet
 data/processed/*.csv
+!data/processed/processed_dataset.csv
 data/processed/*.parquet
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/schema/.gitkeep
 !data/reports/.gitkeep
+
 
 # Environment & Secrets
 .env
