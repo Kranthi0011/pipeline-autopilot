@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.11'
       
       - name: Install dependencies
         run: |
@@ -50,7 +50,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.11'
       
       - name: Install dependencies
         run: |
@@ -130,6 +130,12 @@ jobs:
     if: always()
     
     steps:
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
       - name: Notify success
         if: needs.train-and-validate.result == 'success'
         run: |
