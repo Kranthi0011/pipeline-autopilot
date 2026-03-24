@@ -1,12 +1,12 @@
 {
   "model": "XGBoost",
-  "dataset": "/Users/cgunal7/pipeline-autopilot-1/data/processed/processed_dataset.csv",
+  "dataset": "/opt/airflow/data/processed/processed_dataset.csv",
   "test_size_percent": 15,
   "hold_out_metrics": {
-    "accuracy": 0.997,
-    "precision": 0.9784,
-    "recall": 0.9953,
-    "f1_score": 0.9868,
+    "accuracy": 0.9968,
+    "precision": 0.9765,
+    "recall": 0.9961,
+    "f1_score": 0.9862,
     "auc_roc": 0.9999,
     "auc_pr": 0.9995,
     "test_size": 22500,
@@ -14,28 +14,28 @@
   },
   "classification_report": {
     "No Failure": {
-      "precision": 0.999397166683412,
-      "recall": 0.9971929824561403,
-      "f1-score": 0.9982938578883982,
+      "precision": 0.9994974621840294,
+      "recall": 0.9969423558897244,
+      "f1-score": 0.9982182739842907,
       "support": 19950.0
     },
     "Failure": {
-      "precision": 0.9784117193523516,
-      "recall": 0.9952941176470588,
-      "f1-score": 0.9867807153965785,
+      "precision": 0.9765474817377932,
+      "recall": 0.996078431372549,
+      "f1-score": 0.9862162686856921,
       "support": 2550.0
     },
-    "accuracy": 0.9969777777777777,
+    "accuracy": 0.9968444444444444,
     "macro avg": {
-      "precision": 0.9889044430178818,
-      "recall": 0.9962435500515996,
-      "f1-score": 0.9925372866424884,
+      "precision": 0.9880224719609112,
+      "recall": 0.9965103936311367,
+      "f1-score": 0.9922172713349915,
       "support": 22500.0
     },
     "weighted avg": {
-      "precision": 0.9970188159858919,
-      "recall": 0.9969777777777777,
-      "f1-score": 0.9969890350726587,
+      "precision": 0.9968964644001225,
+      "recall": 0.9968444444444444,
+      "f1-score": 0.9968580467171163,
       "support": 22500.0
     }
   },
@@ -44,71 +44,71 @@
       {
         "threshold": 0.1,
         "precision": 0.9604,
-        "recall": 0.9992,
-        "f1_score": 0.9794,
+        "recall": 0.9984,
+        "f1_score": 0.979,
         "accuracy": 0.9952
       },
       {
         "threshold": 0.2,
-        "precision": 0.9666,
-        "recall": 0.9976,
-        "f1_score": 0.9819,
-        "accuracy": 0.9958
-      },
-      {
-        "threshold": 0.3,
-        "precision": 0.9702,
-        "recall": 0.9973,
-        "f1_score": 0.9836,
+        "precision": 0.9692,
+        "recall": 0.998,
+        "f1_score": 0.9834,
         "accuracy": 0.9962
       },
       {
-        "threshold": 0.4,
-        "precision": 0.9732,
+        "threshold": 0.3,
+        "precision": 0.9725,
         "recall": 0.9969,
-        "f1_score": 0.9849,
-        "accuracy": 0.9965
+        "f1_score": 0.9845,
+        "accuracy": 0.9964
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.9751,
+        "recall": 0.9969,
+        "f1_score": 0.9858,
+        "accuracy": 0.9968
       },
       {
         "threshold": 0.5,
-        "precision": 0.9784,
-        "recall": 0.9953,
-        "f1_score": 0.9868,
-        "accuracy": 0.997
+        "precision": 0.9765,
+        "recall": 0.9961,
+        "f1_score": 0.9862,
+        "accuracy": 0.9968
       },
       {
         "threshold": 0.6,
-        "precision": 0.9814,
+        "precision": 0.9799,
         "recall": 0.9945,
-        "f1_score": 0.9879,
-        "accuracy": 0.9972
+        "f1_score": 0.9872,
+        "accuracy": 0.9971
       },
       {
         "threshold": 0.7,
-        "precision": 0.9852,
-        "recall": 0.9925,
-        "f1_score": 0.9889,
-        "accuracy": 0.9975
-      },
-      {
-        "threshold": 0.8,
-        "precision": 0.9875,
-        "recall": 0.9886,
-        "f1_score": 0.988,
+        "precision": 0.9841,
+        "recall": 0.9922,
+        "f1_score": 0.9881,
         "accuracy": 0.9973
       },
       {
+        "threshold": 0.8,
+        "precision": 0.9871,
+        "recall": 0.9902,
+        "f1_score": 0.9886,
+        "accuracy": 0.9974
+      },
+      {
         "threshold": 0.9,
-        "precision": 0.9925,
+        "precision": 0.9917,
         "recall": 0.9827,
-        "f1_score": 0.9876,
-        "accuracy": 0.9972
+        "f1_score": 0.9872,
+        "accuracy": 0.9971
       }
     ],
-    "optimal_threshold": 0.7,
-    "optimal_f1": 0.9889,
-    "optimal_precision": 0.9852,
-    "optimal_recall": 0.9925
+    "optimal_threshold": 0.8,
+    "optimal_f1": 0.9886,
+    "optimal_precision": 0.9871,
+    "optimal_recall": 0.9902
   },
   "validation_gate": {
     "status": "PASSED",
@@ -119,9 +119,9 @@
   },
   "rollback": {
     "decision": "ACCEPTED",
-    "reason": "No previous model exists. Current model set as baseline.",
+    "reason": "New model (AUC=0.9999) is better than or equal to previous (AUC=0.9999). Keeping new model.",
     "current_auc": 0.9999,
-    "previous_auc": null,
+    "previous_auc": 0.9999,
     "rollback_needed": false
   }
 }

@@ -1,5 +1,5 @@
 {
-  "run_id": "8e56922383734c3fbc44b5bb21e10c6c",
+  "run_id": "0ec9695fd3954040ba43da7e27df820d",
   "run_name": "logistic_regression",
   "auc_roc": 0.99833,
   "auc_pr": 0.973057,
