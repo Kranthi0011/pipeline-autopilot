@@ -31,9 +31,18 @@ logger = logging.getLogger(__name__)
 BASE_DIR   = Path(__file__).resolve().parent.parent
 DATA_PATH  = BASE_DIR / "data" / "processed" / "final_dataset_processed.csv"
 MODELS_DIR = BASE_DIR / "models" / "trained"
-MODELS_DIR.mkdir(parents=True, exist_ok=True)
-(BASE_DIR / "models" / "registry").mkdir(parents=True, exist_ok=True)
-(BASE_DIR / "models" / "sensitivity").mkdir(parents=True, exist_ok=True)
+try:
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    pass
+try:
+    (BASE_DIR / "models" / "registry").mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    pass
+try:
+    (BASE_DIR / "models" / "sensitivity").mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    pass
 
 TARGET_COL  = "failed"
 RANDOM_SEED = 42
