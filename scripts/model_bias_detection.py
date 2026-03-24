@@ -13,7 +13,7 @@ import xgboost
 
 # --- FIX: Set MLflow to use a local relative path to avoid "Aishwarya%20V" error ---
 os.makedirs('mlruns', exist_ok=True)
-mlflow.set_tracking_uri(f"file:///{os.path.join(os.getcwd(), 'mlruns').replace('\\', '/')}")
+mlflow.set_tracking_uri("file:///" + os.path.join(os.getcwd(), "mlruns").replace("\\", "/"))
 
 # --- STEP 2: Load Assets & Reproduce Split ---
 def load_assets():
