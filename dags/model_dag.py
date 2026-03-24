@@ -47,7 +47,7 @@ def task_validation_gate(**context):
     if val_rpt.exists():
         with open(val_rpt) as f:
             rpt = json.load(f)
-        auc = rpt.get("auc_roc") or rpt.get("metrics", {}).get("auc_roc", 0)
+        auc = rpt.get("validation_gate", {}).get("auc_roc") or rpt.get("hold_out_metrics", {}).get("auc_roc") or rpt.get("auc_roc", 0)
         logger.info("Validation AUC: %.4f", float(auc))
         if float(auc) < 0.85:
             raise ValueError(f"Validation gate FAILED: AUC {auc} < 0.85")
