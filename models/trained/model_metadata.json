@@ -1,7 +1,7 @@
 {
   "best_model_name": "xgboost_default",
   "model_path": "/Users/amathikranthi/pipeline-autopilot/models/trained/best_model.joblib",
-  "trained_at": "2026-03-22T18:30:35.003684",
+  "trained_at": "2026-03-24T15:26:59.148532",
   "val_metrics": {
     "auc_roc": 0.999923,
     "auc_pr": 0.999394,

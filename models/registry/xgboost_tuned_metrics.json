@@ -1,0 +1,22 @@
+{
+  "run_id": "7ba90ba1be18452f909e8cd8d2d3f7bc",
+  "run_name": "xgboost_tuned",
+  "auc_roc": 0.999921,
+  "auc_pr": 0.999382,
+  "f1": 0.987905,
+  "precision": 0.982919,
+  "recall": 0.992941,
+  "accuracy": 0.997244,
+  "cv_auc_mean": 0.999892,
+  "model": "xgboost_tuned",
+  "scale_pos_weight": 7.824,
+  "subsample": 0.7,
+  "reg_lambda": 2.5,
+  "reg_alpha": 0.01,
+  "n_estimators": 500,
+  "min_child_weight": 1,
+  "max_depth": 8,
+  "learning_rate": 0.05,
+  "gamma": 0.3,
+  "colsample_bytree": 0.6
+}
