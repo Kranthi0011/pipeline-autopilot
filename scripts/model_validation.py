@@ -67,7 +67,7 @@ logger = logging.getLogger("model_validation")
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-PROCESSED_DATASET = PROCESSED_DATA_DIR / "final_dataset_processed.csv"
+PROCESSED_DATASET = BASE_DIR / "scripts" / "final_dataset_processed.csv"
 MODEL_DIR         = Path(__file__).resolve().parents[1] / "models"
 MODEL_PATH        = MODEL_DIR / "best_model.joblib"
 SCALER_PATH       = MODEL_DIR / "scaler.joblib"
