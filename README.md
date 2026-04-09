@@ -936,3 +936,36 @@ This project is for educational purposes (MLOps Course Project - March 2026).
 - **MLflow UI:** http://localhost:5000 (when running)
 
 ---
+
+---
+
+## 🚀 Assignment 3 — Deployment Updates
+
+### Updated 13-Task DAG
+```
+data_acquisition → data_preprocessing
+  → [schema_validation || bias_detection]
+  → anomaly_detection → dvc_versioning
+  → model_training → model_validation
+  → [model_bias || sensitivity_analysis]
+  → validation_gate → push_to_registry
+  → drift_monitoring → pipeline_complete
+```
+
+### Model Performance
+
+| Model | AUC | F1 |
+|---|---|---|
+| Logistic Regression | ~0.88 | ~0.62 |
+| Random Forest | ~0.91 | ~0.68 |
+| XGBoost Default | ~0.92 | ~0.70 |
+| **XGBoost Tuned** | **~0.93** | **~0.72** |
+| MLP | ~0.89 | ~0.64 |
+
+### Live Endpoint
+- **Cloud Run URL:** *(Member 2 — updating Wed Apr 8)*
+
+### Alert System
+- Fires when prediction probability > 0.75
+- Email contains: pipeline name, risk score, top 3 SHAP features
+- Set env vars: `ALERT_EMAIL_SENDER`, `ALERT_EMAIL_PASSWORD`, `ALERT_EMAIL_RECEIVER`
