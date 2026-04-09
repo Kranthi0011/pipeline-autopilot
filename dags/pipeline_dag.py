@@ -83,7 +83,7 @@ def run_model_validation(**context):
     auc = 0.0
     f1  = 0.0
     if isinstance(report, dict):
-        for key in ['auc', 'roc_auc', 'AUC', 'test_auc']:
+        for key in ['auc_roc', 'auc', 'roc_auc', 'AUC', 'test_auc']:
             if key in report:
                 auc = float(report[key]); break
         for key in ['f1', 'f1_score', 'F1', 'test_f1']:
