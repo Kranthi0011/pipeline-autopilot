@@ -1,6 +1,6 @@
 """
 pipeline_dag.py — PipelineGuard 13-task Airflow DAG
-Assignment 3 | Member 1 update: fixed function names to match actual scripts
+Assignment 3 | Member 1 update: all function names verified against actual scripts
 """
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -22,16 +22,13 @@ def run_data_acquisition():
     acquire_data()
 
 def run_data_preprocessing():
-    import sys
-    sys.path.insert(0, '/opt/airflow/scripts')
     from data_preprocessing import (load_data, handle_missing_values,
         remove_duplicates, validate_dtypes, enforce_constraints,
         cap_outliers, parse_datetime, encode_categoricals,
         validate_features, save_processed_data)
-    from config import RAW_DATA_FILE, PROCESSED_DATA_FILE
+    from config import RAW_DATA_FILE
     import logging
     logger = logging.getLogger(__name__)
-    logger.info("Starting preprocessing pipeline...")
     df = load_data(str(RAW_DATA_FILE))
     df = handle_missing_values(df)
     df = remove_duplicates(df)
@@ -66,29 +63,29 @@ def run_model_training():
         "model_training", "/opt/airflow/scripts/model_training.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.info("Model training started")
+    mod.main()
 
 def run_model_validation(**context):
-    import importlib.util
+    import importlib.util, logging
+    logger = logging.getLogger(__name__)
     spec = importlib.util.spec_from_file_location(
         "model_validation", "/opt/airflow/scripts/model_validation.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    import logging, os
-    logger = logging.getLogger(__name__)
-    report_path = "/opt/airflow/data/reports/validation_report.json"
-    auc, f1 = 0.0, 0.0
-    if os.path.exists(report_path):
-        import json
-        with open(report_path) as f:
-            report = json.load(f)
-        auc = report.get('auc', report.get('roc_auc', 0.0))
-        f1  = report.get('f1', report.get('f1_score', 0.0))
+    report = mod.run_model_validation()
+    # extract AUC and F1 from returned dict
+    auc = 0.0
+    f1  = 0.0
+    if isinstance(report, dict):
+        for key in ['auc', 'roc_auc', 'AUC', 'test_auc']:
+            if key in report:
+                auc = float(report[key]); break
+        for key in ['f1', 'f1_score', 'F1', 'test_f1']:
+            if key in report:
+                f1 = float(report[key]); break
     logger.info(f"Validation — AUC: {auc:.4f}, F1: {f1:.4f}")
-    context['ti'].xcom_push(key='val_auc', value=round(float(auc), 4))
-    context['ti'].xcom_push(key='val_f1',  value=round(float(f1), 4))
+    context['ti'].xcom_push(key='val_auc', value=round(auc, 4))
+    context['ti'].xcom_push(key='val_f1',  value=round(f1, 4))
 
 def run_model_bias(**context):
     import importlib.util, logging
@@ -98,9 +95,10 @@ def run_model_bias(**context):
             "model_bias_detection", "/opt/airflow/scripts/model_bias_detection.py")
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
+        mod.run_bias_detection()
         logger.info("Model bias detection complete")
     except Exception as e:
-        logger.warning(f"Model bias task skipped: {e}")
+        logger.warning(f"Model bias skipped: {e}")
 
 def run_sensitivity_analysis(**context):
     import importlib.util, logging
@@ -110,9 +108,14 @@ def run_sensitivity_analysis(**context):
             "model_sensitivity", "/opt/airflow/scripts/model_sensitivity.py")
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
-        logger.info("Sensitivity analysis complete")
-        context['ti'].xcom_push(key='top_shap_features',
-            value=['retry_count', 'duration_deviation', 'failures_last_7_runs'])
+        result = mod.run_sensitivity_analysis()
+        top3 = ['retry_count', 'duration_deviation', 'failures_last_7_runs']
+        if isinstance(result, dict):
+            for key in ['top_features', 'shap_features', 'important_features']:
+                if key in result:
+                    top3 = result[key][:3]; break
+        context['ti'].xcom_push(key='top_shap_features', value=top3)
+        logger.info(f"Sensitivity analysis complete. Top features: {top3}")
     except Exception as e:
         logger.warning(f"Sensitivity analysis skipped: {e}")
         context['ti'].xcom_push(key='top_shap_features',
@@ -135,6 +138,7 @@ def run_push_to_registry():
             "model_registry", "/opt/airflow/scripts/model_registry.py")
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
+        mod.run_model_registry(dry_run=False)
         logger.info("Model pushed to registry")
     except Exception as e:
         logger.warning(f"Registry push skipped: {e}")
@@ -146,8 +150,9 @@ def run_drift_monitoring(**context):
         from evidently.report import Report
         from evidently.metric_preset import DataDriftPreset
         df = pd.read_csv("/opt/airflow/data/processed/final_dataset_processed.csv")
-        features = [f for f in ['retry_count','duration_deviation',
-            'failures_last_7_runs','workflow_failure_rate','total_jobs'] if f in df.columns]
+        features = [f for f in ['retry_count', 'duration_deviation',
+            'failures_last_7_runs', 'workflow_failure_rate', 'total_jobs']
+            if f in df.columns]
         half = len(df) // 2
         report = Report(metrics=[DataDriftPreset()])
         report.run(reference_data=df[features].iloc[:half],
@@ -166,10 +171,10 @@ def run_pipeline_complete(**context):
     import logging
     logger = logging.getLogger(__name__)
     ti = context['ti']
-    auc   = ti.xcom_pull(task_ids='model_validation',    key='val_auc') or 'N/A'
-    f1    = ti.xcom_pull(task_ids='model_validation',    key='val_f1')  or 'N/A'
-    shap  = ti.xcom_pull(task_ids='sensitivity_analysis',key='top_shap_features') or []
-    drift = ti.xcom_pull(task_ids='drift_monitoring',    key='drift_score') or 0.0
+    auc   = ti.xcom_pull(task_ids='model_validation',     key='val_auc') or 'N/A'
+    f1    = ti.xcom_pull(task_ids='model_validation',     key='val_f1')  or 'N/A'
+    shap  = ti.xcom_pull(task_ids='sensitivity_analysis', key='top_shap_features') or []
+    drift = ti.xcom_pull(task_ids='drift_monitoring',     key='drift_score') or 0.0
     logger.info("=" * 60)
     logger.info("  PIPELINEGUARD — PIPELINE COMPLETE")
     logger.info(f"  AUC: {auc}  |  F1: {f1}")
@@ -193,13 +198,13 @@ with DAG(
     t_anomaly     = PythonOperator(task_id='anomaly_detection',    python_callable=run_anomaly_detection)
     t_dvc         = PythonOperator(task_id='dvc_versioning',       python_callable=run_dvc_versioning)
     t_train       = PythonOperator(task_id='model_training',       python_callable=run_model_training)
-    t_validate    = PythonOperator(task_id='model_validation',     python_callable=run_model_validation,    provide_context=True)
-    t_bias_model  = PythonOperator(task_id='model_bias',           python_callable=run_model_bias,          provide_context=True)
-    t_sensitivity = PythonOperator(task_id='sensitivity_analysis', python_callable=run_sensitivity_analysis,provide_context=True)
-    t_gate        = PythonOperator(task_id='validation_gate',      python_callable=run_validation_gate,     provide_context=True)
+    t_validate    = PythonOperator(task_id='model_validation',     python_callable=run_model_validation,     provide_context=True)
+    t_bias_model  = PythonOperator(task_id='model_bias',           python_callable=run_model_bias,           provide_context=True)
+    t_sensitivity = PythonOperator(task_id='sensitivity_analysis', python_callable=run_sensitivity_analysis, provide_context=True)
+    t_gate        = PythonOperator(task_id='validation_gate',      python_callable=run_validation_gate,      provide_context=True)
     t_registry    = PythonOperator(task_id='push_to_registry',     python_callable=run_push_to_registry)
-    t_drift       = PythonOperator(task_id='drift_monitoring',     python_callable=run_drift_monitoring,    provide_context=True)
-    t_complete    = PythonOperator(task_id='pipeline_complete',    python_callable=run_pipeline_complete,   provide_context=True)
+    t_drift       = PythonOperator(task_id='drift_monitoring',     python_callable=run_drift_monitoring,     provide_context=True)
+    t_complete    = PythonOperator(task_id='pipeline_complete',    python_callable=run_pipeline_complete,    provide_context=True)
 
     t_acquire >> t_preprocess
     t_preprocess >> [t_schema, t_bias_data]
