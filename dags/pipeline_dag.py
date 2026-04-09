@@ -83,12 +83,13 @@ def run_model_validation(**context):
     auc = 0.0
     f1  = 0.0
     if isinstance(report, dict):
+        metrics = report.get('metrics', report)
         for key in ['auc_roc', 'auc', 'roc_auc', 'AUC', 'test_auc']:
-            if key in report:
-                auc = float(report[key]); break
-        for key in ['f1', 'f1_score', 'F1', 'test_f1']:
-            if key in report:
-                f1 = float(report[key]); break
+            if key in metrics:
+                auc = float(metrics[key]); break
+        for key in ['f1_score', 'f1', 'F1', 'test_f1']:
+            if key in metrics:
+                f1 = float(metrics[key]); break
     logger.info(f"Validation — AUC: {auc:.4f}, F1: {f1:.4f}")
     context['ti'].xcom_push(key='val_auc', value=round(auc, 4))
     context['ti'].xcom_push(key='val_f1',  value=round(f1, 4))
